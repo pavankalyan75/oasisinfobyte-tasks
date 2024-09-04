@@ -1,0 +1,68 @@
+import java.util.Random;
+import java.util.Scanner;
+
+public class NumberGuessingGame {
+
+    private static final int MAX_ATTEMPTS = 5;
+    private static final int NUM_ROUNDS = 3;
+    private static int totalScore = 0;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+
+        System.out.println("Welcome to the Number Guessing Game!");
+        System.out.println("Try to guess the number between 1 and 100.");
+        System.out.println("You have " + MAX_ATTEMPTS + " attempts per round.");
+        System.out.println("You will play " + NUM_ROUNDS + " rounds in total.");
+
+        for (int round = 1; round <= NUM_ROUNDS; round++) {
+            int roundScore = playRound(scanner, random);
+            totalScore += roundScore;
+            System.out.println("Round " + round + " score: " + roundScore);
+        }
+
+        System.out.println("Game over! Your total score: " + totalScore);
+        scanner.close();
+    }
+
+    private static int playRound(Scanner scanner, Random random) {
+        int lowerBound = 1;
+        int upperBound = 100;
+        int numberToGuess = random.nextInt(upperBound - lowerBound + 1) + lowerBound;
+        int numberOfAttempts = 0;
+        boolean hasGuessedCorrectly = false;
+
+        System.out.println("\nNew Round!");
+        System.out.println("I'm thinking of a number between " + lowerBound + " and " + upperBound + ".");
+
+        while (!hasGuessedCorrectly && numberOfAttempts < MAX_ATTEMPTS) {
+            System.out.print("Enter your guess (" + (MAX_ATTEMPTS - numberOfAttempts) + " attempts left): ");
+            int playerGuess = scanner.nextInt();
+            numberOfAttempts++;
+
+            if (playerGuess < lowerBound || playerGuess > upperBound) {
+                System.out.println("Please guess a number between " + lowerBound + " and " + upperBound + ".");
+            } else if (playerGuess < numberToGuess) {
+                System.out.println("Too low!");
+            } else if (playerGuess > numberToGuess) {
+                System.out.println("Too high!");
+            } else {
+                hasGuessedCorrectly = true;
+                int points = calculatePoints(numberOfAttempts);
+                System.out.println("Congratulations! You guessed the number in " + numberOfAttempts + " attempts.");
+                return points;
+            }
+        }
+
+        if (!hasGuessedCorrectly) {
+            System.out.println("Sorry, you've run out of attempts. The number was " + numberToGuess + ".");
+        }
+
+        return 0;
+    }
+
+    private static int calculatePoints(int attempts) {
+        return Math.max(0, MAX_ATTEMPTS - attempts + 1);
+    }
+}
